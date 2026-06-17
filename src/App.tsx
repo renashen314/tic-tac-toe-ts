@@ -1,9 +1,10 @@
-import { initGame, play, startGame } from "./logic/game";
+import { initGame, play, playAI, startGame } from "./logic/game";
 import "./App.css";
 import { useState } from "react";
 
 function App() {
   const [game, setGame] = useState(initGame());
+  const [mode, setMode] = useState<"human" | "ai">("human");
 
   return (
     <div className="container">
@@ -13,14 +14,42 @@ function App() {
           <div
             className="cell"
             key={index}
-            onClick={() => setGame(play(game, index))}
+            onClick={() => {
+              if (mode === "human") {
+                setGame(play(game, index));
+              }
+              if (mode === "ai") {
+                const afterHuman = play(game, index);
+                setGame(afterHuman);
+                if (afterHuman.state === "playing") {
+                  setTimeout(() => setGame(playAI(afterHuman)), 500);
+                }
+              }
+            }}
           >
             {cell}
           </div>
         ))}
       </div>
       {game.state === "init" && (
-        <button onClick={() => setGame(startGame(game))}>Start Game</button>
+        <div>
+          <button
+            onClick={() => {
+              setGame(startGame(game));
+              setMode("human");
+            }}
+          >
+            Start Game
+          </button>
+          <button
+            onClick={() => {
+              setGame(startGame(game));
+              setMode("ai");
+            }}
+          >
+            Play with AI
+          </button>
+        </div>
       )}
       {game.state === "playing" && (
         <div>

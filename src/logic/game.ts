@@ -1,3 +1,4 @@
+import { getBestMove } from "./gameAI";
 import type { Game } from "./types";
 
 const WIN_CONDITIONS = [
@@ -28,34 +29,52 @@ export function startGame(game: Game): Game {
   };
 }
 
+function checkWin(game: Game): void {
+  const { cells } = game;
+  for (const [a, b, c] of WIN_CONDITIONS) {
+    if (cells[a] === cells[b] && cells[b] === cells[c] && cells[a] !== null) {
+      game.state = "won";
+      game.winner = cells[a];
+      game.turn = undefined;
+      return;
+    }
+  }
+  if (cells.every((cell) => cell !== null)) {
+    game.state = "draw";
+    game.winner = undefined;
+    game.turn = undefined;
+  }
+}
+
 export function play(game: Game, cellIndex: number): Game {
   const newGame = { ...game };
   const { cells } = newGame;
 
-  if (newGame.state === "playing") {
-    if (newGame.turn === "X" && cells[cellIndex] === null) {
+  if (newGame.state === "playing" && cells[cellIndex] === null) {
+    if (newGame.turn === "X") {
       cells[cellIndex] = "X";
       newGame.turn = "O";
-    } else if (newGame.turn === "O" && cells[cellIndex] === null) {
+    } else if (newGame.turn === "O") {
       cells[cellIndex] = "O";
       newGame.turn = "X";
     }
-
-    // check win condition
-    for (const [a, b, c] of WIN_CONDITIONS) {
-      if (cells[a] === cells[b] && cells[b] === cells[c] && cells[a] !== null) {
-        newGame.state = "won";
-        newGame.winner = cells[a];
-        newGame.turn = undefined;
-        break;
-      }
-    }
-
-    if (newGame.state !== "won" && cells.every((cell) => cell !== null)) {
-      newGame.state = "draw";
-      newGame.winner = undefined;
-      newGame.turn = undefined;
-    }
+    checkWin(newGame);
   }
+  return newGame;
+}
+
+export function playAI(game: Game): Game {
+  const newGame = { ...game };
+  const { cells } = newGame;
+
+  if (newGame.state !== "playing" || newGame.turn !== "O") {
+    return newGame;
+  }
+
+  const aiMove = getBestMove(cells);
+  cells[aiMove] = "O";
+  newGame.turn = "X";
+  checkWin(newGame);
+
   return newGame;
 }
