@@ -40,6 +40,7 @@ function App() {
           </div>
         ))}
       </div>
+      {error && <div className="toast">{error}</div>}
       {game.state === "init" && (
         <div className="actions">
           <button
@@ -66,7 +67,6 @@ function App() {
           <button onClick={() => setGame(initGame())}>Restart</button>
         </div>
       )}
-      {error && <div className="toast">{error}</div>}
       {game.state === "won" && (
         <div className="status">
           <p>{game.winner} wins!</p>
