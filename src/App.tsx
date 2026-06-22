@@ -10,7 +10,9 @@ function App() {
   return (
     <div className="container">
       <h1>Tic Tac Toe</h1>
-      <div className="board">
+      <div
+        className={`board ${mode === "ai" && game.turn === "O" ? "disabled" : ""}`}
+      >
         {game.cells.map((cell, index) => (
           <div
             className="cell"
@@ -29,6 +31,11 @@ function App() {
               }
               if (mode === "ai") {
                 const afterHuman = play(game, index);
+                if (game.state === "playing" && afterHuman === game) {
+                  setError("Cell is occupied");
+                  setTimeout(() => setError(null), 2000);
+                  return;
+                }
                 setGame(afterHuman);
                 if (afterHuman.state === "playing") {
                   setTimeout(() => setGame(playAI(afterHuman)), 500);
@@ -63,7 +70,10 @@ function App() {
       )}
       {game.state === "playing" && (
         <div className="status">
-          <p>{game.turn}'s turn</p>
+          {mode === "ai" && game.turn === "O" && <p>AI is thinking...</p>}
+          {mode === "ai" && game.turn === "X" && <p>Your turn</p>}
+          {mode === "human" && <p>{game.turn}'s turn</p>}
+
           <button onClick={() => setGame(initGame())}>Restart</button>
         </div>
       )}

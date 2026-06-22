@@ -45,6 +45,10 @@ h1 {
   transition: background-color 0.15s;
 }
 
+.board.disabled {
+  pointer-events: none;
+}
+
 .cell:hover {
   background-color: #1e1e1e;
 }
