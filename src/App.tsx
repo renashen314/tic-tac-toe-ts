@@ -15,10 +15,11 @@ function App() {
           <div
             className="cell"
             key={index}
+            data-mark={cell ?? ""}
             onClick={() => {
               if (mode === "human") {
                 const next = play(game, index);
-                if (next === game) {
+                if (game.state === "playing" && next === game) {
                   setError("Cell is occupied");
                   setTimeout(() => setError(null), 2000);
                 } else {
@@ -40,14 +41,14 @@ function App() {
         ))}
       </div>
       {game.state === "init" && (
-        <div>
+        <div className="actions">
           <button
             onClick={() => {
               setGame(startGame(game));
               setMode("human");
             }}
           >
-            Start Game
+            2 Players
           </button>
           <button
             onClick={() => {
@@ -55,25 +56,25 @@ function App() {
               setMode("ai");
             }}
           >
-            Play with AI
+            vs AI
           </button>
         </div>
       )}
       {game.state === "playing" && (
-        <div>
+        <div className="status">
           <p>{game.turn}'s turn</p>
-          {error && <p>{error}</p>}
           <button onClick={() => setGame(initGame())}>Restart</button>
         </div>
       )}
+      {error && <div className="toast">{error}</div>}
       {game.state === "won" && (
-        <div>
+        <div className="status">
           <p>{game.winner} wins!</p>
           <button onClick={() => setGame(initGame())}>Restart</button>
         </div>
       )}
       {game.state === "draw" && (
-        <div>
+        <div className="status">
           <p>It's a draw!</p>
           <button onClick={() => setGame(initGame())}>Restart</button>
         </div>
