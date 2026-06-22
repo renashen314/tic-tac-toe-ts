@@ -5,5 +5,5 @@ export interface Game {
   winner?: Marks;
 }
 
-type Marks = "X" | "O";
-type GameState = "init" | "playing" | "won" | "draw";
+export type Marks = "X" | "O";
+export type GameState = "init" | "playing" | "won" | "draw";
