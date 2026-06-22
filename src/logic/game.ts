@@ -47,19 +47,21 @@ function checkWin(game: Game): void {
 }
 
 export function play(game: Game, cellIndex: number): Game {
+  if (game.state !== "playing" || game.cells[cellIndex] !== null) {
+    return game;
+  }
+
   const newGame = { ...game };
   const { cells } = newGame;
 
-  if (newGame.state === "playing" && cells[cellIndex] === null) {
-    if (newGame.turn === "X") {
-      cells[cellIndex] = "X";
-      newGame.turn = "O";
+  if (newGame.turn === "X") {
+    cells[cellIndex] = "X";
+    newGame.turn = "O";
     } else if (newGame.turn === "O") {
-      cells[cellIndex] = "O";
-      newGame.turn = "X";
-    }
-    checkWin(newGame);
+    cells[cellIndex] = "O";
+    newGame.turn = "X";
   }
+  checkWin(newGame);
   return newGame;
 }
 

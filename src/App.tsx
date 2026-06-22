@@ -5,6 +5,7 @@ import { useState } from "react";
 function App() {
   const [game, setGame] = useState(initGame());
   const [mode, setMode] = useState<"human" | "ai">("human");
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <div className="container">
@@ -16,7 +17,14 @@ function App() {
             key={index}
             onClick={() => {
               if (mode === "human") {
-                setGame(play(game, index));
+                const next = play(game, index);
+                if (next === game) {
+                  setError("Cell is occupied");
+                  setTimeout(() => setError(null), 2000);
+                } else {
+                  setGame(next);
+                  setError(null);
+                }
               }
               if (mode === "ai") {
                 const afterHuman = play(game, index);
@@ -54,6 +62,7 @@ function App() {
       {game.state === "playing" && (
         <div>
           <p>{game.turn}'s turn</p>
+          {error && <p>{error}</p>}
           <button onClick={() => setGame(initGame())}>Restart</button>
         </div>
       )}
